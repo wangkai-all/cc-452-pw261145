@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>采集审计台</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="viz-root">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">◈</span>
+      <h1>采集审计台</h1>
+      <span class="brand-sub">批次 → 来源 → 文件 → 记录 → 实体 全链路追溯</span>
+    </div>
+    <div class="top-actions">
+      <button id="btn-reseed" class="btn ghost" title="重置并重新装载演示数据">↺ 重置演示数据</button>
+      <button id="btn-theme" class="btn ghost" title="切换明暗主题">◐ 主题</button>
+    </div>
+  </header>
+
+  <section class="tiles" id="tiles" aria-label="总览指标"></section>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="side-head">
+        <label for="source-filter">来源</label>
+        <select id="source-filter"><option value="">全部来源</option></select>
+      </div>
+      <ul id="batch-list" class="batch-list" aria-label="批次列表"></ul>
+    </aside>
+
+    <main class="main">
+      <div id="batch-head" class="batch-head"></div>
+
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-tab="graph" role="tab">依赖图</button>
+        <button class="tab" data-tab="records" role="tab">解析记录</button>
+        <button class="tab" data-tab="entities" role="tab">下游实体</button>
+        <button class="tab" data-tab="corrections" role="tab">纠错任务</button>
+        <button class="tab" data-tab="tasks" role="tab">任务队列</button>
+        <button class="tab" data-tab="events" role="tab">审计事件</button>
+      </nav>
+
+      <section id="tab-graph" class="tabpane active">
+        <div class="filter-row">
+          <span class="legend" id="graph-legend"></span>
+        </div>
+        <div class="graph-wrap">
+          <svg id="graph" role="img" aria-label="血缘依赖图"></svg>
+          <div id="graph-tip" class="tooltip" hidden></div>
+        </div>
+        <div id="node-detail" class="detail-pane"><p class="muted">点击图中节点查看详情与溯源链。</p></div>
+      </section>
+
+      <section id="tab-records" class="tabpane">
+        <div class="filter-row">
+          <label>版本 <select id="rec-version-filter"><option value="">全部</option></select></label>
+          <label>状态
+            <select id="rec-status-filter">
+              <option value="">全部</option><option value="ok">正常</option>
+              <option value="warn">警告</option><option value="error">错误</option>
+            </select>
+          </label>
+        </div>
+        <div class="table-wrap"><table id="records-table"></table></div>
+        <div id="record-detail" class="detail-pane"></div>
+      </section>
+
+      <section id="tab-entities" class="tabpane">
+        <div class="filter-row">
+          <label><input type="checkbox" id="ent-show-superseded" checked> 显示被取代的原结论</label>
+        </div>
+        <div class="table-wrap"><table id="entities-table"></table></div>
+        <div id="entity-detail" class="detail-pane"></div>
+      </section>
+
+      <section id="tab-corrections" class="tabpane">
+        <div class="card">
+          <h2>发起纠错 <span class="muted" id="corr-base-note"></span></h2>
+          <p class="muted">纠错只生成新版本，原版本结论完整保留；依赖旧版本的下游任务将按影响范围重新排队。</p>
+          <div class="corr-form">
+            <label>纠错原因 <input id="corr-reason" type="text" placeholder="例: PO-2002 缺金额,供应商补发"></label>
+            <div id="corr-items"></div>
+            <div class="corr-form-actions">
+              <button class="btn ghost" id="corr-add-item">+ 添加纠错项</button>
+              <button class="btn primary" id="corr-submit">提交纠错</button>
+            </div>
+          </div>
+        </div>
+        <div class="table-wrap"><table id="corrections-table"></table></div>
+        <div id="correction-detail" class="detail-pane"></div>
+      </section>
+
+      <section id="tab-tasks" class="tabpane">
+        <div class="filter-row"><span class="muted">任务每 2 秒自动刷新;运行中的任务可协作式取消。</span></div>
+        <div class="table-wrap"><table id="tasks-table"></table></div>
+      </section>
+
+      <section id="tab-events" class="tabpane">
+        <div class="table-wrap"><table id="events-table"></table></div>
+      </section>
+    </main>
+  </div>
+</div>
+<script src="/static/app.js"></script>
+</body>
+</html>
